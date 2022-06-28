@@ -601,8 +601,7 @@ end;
 function TRequestClient.AddFile(const AName: string; const AFileName: string; const AStream: TStream): IRequest;
 begin
   Result := Self;
-  if not Assigned(AValue) then
-    Exit;
+  if not Assigned(AStream) then Exit;
   {$IF COMPILERVERSION >= 33}
   with FRESTRequest.Params.AddItem do
   begin
