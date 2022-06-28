@@ -66,7 +66,8 @@ type
     function UserAgent(const AName: string): IRequest;
     function AddCookies(const ACookies: TStrings): IRequest;
     function AddCookie(const ACookieName, ACookieValue: string): IRequest;	
-    function AddFile(const AName: string; const AValue: TFileStream): IRequest;
+    function AddFile(const AName: string; const AValue: TFileStream): IRequest;overload;
+    function AddFile(const AName: string; const AFileName:string;const AStream: TStream): IRequest;overload;
     function Proxy(const AServer, APassword, AUsername: string; const APort: Integer): IRequest;
     function DeactivateProxy: IRequest;
   protected
@@ -595,6 +596,23 @@ function TRequestClient.AddCookie(const ACookieName, ACookieValue: string): IReq
 begin
   Result := Self;
   FRESTRequest.AddParameter(ACookieName, ACookieValue, TRESTRequestParameterKind.pkCOOKIE);
+end;
+
+function TRequestClient.AddFile(const AName: string; const AFileName: string; const AStream: TStream): IRequest;
+begin
+  Result := Self;
+  if not Assigned(AValue) then
+    Exit;
+  {$IF COMPILERVERSION >= 33}
+  with FRESTRequest.Params.AddItem do
+  begin
+    Name := AName;
+    SetStream(AStream);
+    Value := AFileName;
+    Kind := TRESTRequestParameterKind.pkFILE;
+    ContentType := TRESTContentType.ctAPPLICATION_OCTET_STREAM;
+  end;
+  {$ENDIF}  
 end;
 
 end.
